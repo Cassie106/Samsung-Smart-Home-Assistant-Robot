@@ -5,7 +5,7 @@ import os
 import face_recognition
 import numpy as np
 
-path = 'Visitors'
+path = 'Households'
 images = []
 classNames = []
 myList = os.listdir(path)
@@ -33,10 +33,11 @@ def markAttendance(name):
         nameList = []
         for line in myDataList:
             entry = line.split(',')
-            nameList.append(entry[0])
+            if entry != '.DS_Store':
+                nameList.append(entry[0])
         if name not in nameList:
             now = datetime.now()
-            dtString = now.strftime('%D:%H:%M:%S')
+            dtString = now.strftime('%D.  %H:%M:%S')
             f.writelines(f'\n{name},{dtString}')
 
 
@@ -77,14 +78,12 @@ while True:
         # find out who
         if matches[matchIndex]:
             name = classNames[matchIndex].upper()
-            if name == 'Cassie' or 'Lisa':
-                print('Household, unlock the door' + name)
-            else:
-                print('Visitor, ring the bell' + name)
+            print('Household ' + name + '. The door is unlocked, welcome home!')
             markAttendance(name)
         else:
             name = 'Unknown'
-            print(name)
+            print('Unknown visitor is at the door. ')
+            markAttendance(name)
             y1, x2, y2, x1 = faceLoc
             y1, x2, y2, x1 = y1 * 4, x2 * 4, y2 * 4, x1 * 4
             cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
