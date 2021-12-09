@@ -69,7 +69,7 @@ while True:
     for encodeFace, faceLoc in zip(encodesCurFrame, facesCurFrame):
         matches = face_recognition.compare_faces(encodeListKnown, encodeFace)
         faceDis = face_recognition.face_distance(encodeListKnown, encodeFace)
-        print(faceDis)
+       # print(faceDis)
         matchIndex = np.argmin(faceDis)
 
         # draw square
@@ -82,10 +82,10 @@ while True:
         # find out who
         if matches[matchIndex] and faceDis[matchIndex] <= 0.51:
             name = classNames[matchIndex].upper()
-            print('Household ' + name + '. The door is unlocked, welcome home!')
+            #print('Household ' + name + '. The door is unlocked, welcome home!')
         else:
             name = 'Unknown'
-            print('Unknown visitor is at the door. ')
+            #print('Unknown visitor is at the door. ')
         markAttendance(name)
         cv2.putText(img, name, (x1 + 6, y2 - 6), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 3)
         cv2.imshow('Webcam', img)
