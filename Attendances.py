@@ -1,4 +1,5 @@
 # Copyright 2021 Lu
+import time
 from datetime import datetime
 import cv2
 import os
@@ -33,7 +34,6 @@ for cl in myList:
     images.append(curImg)
     classNames.append(os.path.splitext(cl)[0])
 print(classNames)
-
 
 def findEncodings(images):
     encodeList = []
@@ -74,7 +74,7 @@ cap = cv2.VideoCapture(0)
 #     return capScr
 if not cap.isOpened():
     raise IOError("Cannot open the camera")
-
+count_unknown = 0
 while True:
     success, img = cap.read()
     imgS = cv2.resize(img, (0, 0), None, 0.25, 0.25)
@@ -94,16 +94,19 @@ while True:
         y1, x2, y2, x1 = y1 * 4, x2 * 4, y2 * 4, x1 * 4
         cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
         cv2.rectangle(img, (x1, y2 - 35), (x2, y2), (0, 255, 0), cv2.FILLED)
-        name = ""
+        name = "Unknown"
         isUnknown = True
         if matches[matchIndex] and faceDis[matchIndex] <= 0.5:
             name = classNames[matchIndex].upper()
             # print('Household ' + name + '. The door is unlocked, welcome home!')
             isUnknown = False
+            count_unknown = 0
         else:
-            name = 'Unknown'
-            # print('Unknown visitor is at the door. ')
-            isUnknown = True
+            if count_unknown > 2:
+                name = 'Unknown'
+                # print('Unknown visitor is at the door. ')
+                isUnknown = True
+            count_unknown += 1
         cv2.putText(img, name, (x1 + 6, y2 - 6), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 3)
         markAttendance(name)
         recognition_results = {
